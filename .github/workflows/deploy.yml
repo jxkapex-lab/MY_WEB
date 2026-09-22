@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,12 +28,19 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm ci
+      - name: Verify Supabase configuration
+        shell: bash
+        run: |
+          if [[ -z "$NEXT_PUBLIC_SUPABASE_URL" || -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]]; then
+            echo "::error::Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY as GitHub Actions repository secrets."
+            exit 1
+          fi
       - name: Build with Next.js
         run: npm run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

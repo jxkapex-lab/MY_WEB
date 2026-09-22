@@ -154,65 +154,51 @@ export const fallbackExperiences: Experience[] = [
 // Data Fetching Helpers
 export async function getProjects(): Promise<Project[]> {
   if (!supabase) return fallbackProjects
-  try {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .order('featured', { ascending: false })
-      .order('order_index', { ascending: true })
-      .order('created_at', { ascending: false })
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('featured', { ascending: false })
+    .order('order_index', { ascending: true })
+    .order('created_at', { ascending: false })
 
-    if (error || !data || data.length === 0) {
-      return fallbackProjects
-    }
-    return data as Project[]
-  } catch {
-    return fallbackProjects
+  if (error) {
+    throw new Error(`Unable to load projects from Supabase: ${error.message}`)
   }
+  return (data ?? []) as Project[]
 }
 
 export async function getSkills(): Promise<Skill[]> {
   if (!supabase) return fallbackSkills
-  try {
-    const { data, error } = await supabase
-      .from('skills')
-      .select('*')
-      .order('order_index', { ascending: true })
+  const { data, error } = await supabase
+    .from('skills')
+    .select('*')
+    .order('order_index', { ascending: true })
 
-    if (error || !data || data.length === 0) {
-      return fallbackSkills
-    }
-    return data as Skill[]
-  } catch {
-    return fallbackSkills
+  if (error) {
+    throw new Error(`Unable to load skills from Supabase: ${error.message}`)
   }
+  return (data ?? []) as Skill[]
 }
 
 export async function getExperiences(): Promise<Experience[]> {
   if (!supabase) return fallbackExperiences
-  try {
-    const { data, error } = await supabase
-      .from('experiences')
-      .select('*')
-      .order('order_index', { ascending: true })
+  const { data, error } = await supabase
+    .from('experiences')
+    .select('*')
+    .order('order_index', { ascending: true })
 
-    if (error || !data || data.length === 0) {
-      return fallbackExperiences
-    }
-    return data as Experience[]
-  } catch {
-    return fallbackExperiences
+  if (error) {
+    throw new Error(`Unable to load experiences from Supabase: ${error.message}`)
   }
+  return (data ?? []) as Experience[]
 }
 
 // Contact Form Submission to Supabase
 export async function submitContactMessage(message: ContactMessage): Promise<{ success: boolean; error?: string }> {
   if (!supabase) {
-    // In demo mode or when keys are missing, simulate success after brief delay
-    await new Promise((resolve) => setTimeout(resolve, 800))
     return {
-      success: true,
-      error: 'บันทึกสำเร็จในโหมดทดสอบ (ยังไม่ได้เชื่อมต่อ Supabase Keys จริง)',
+      success: false,
+      error: 'ระบบรับข้อความยังไม่ได้เชื่อมต่อ Supabase กรุณาติดต่อผู้ดูแลเว็บไซต์',
     }
   }
 

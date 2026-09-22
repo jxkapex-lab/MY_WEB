@@ -55,46 +55,28 @@ npm run dev
 
 ---
 
-## 🐙 ขั้นตอนที่ 3: การนำโค้ดขึ้น Git (GitHub)
+## 🐙 ขั้นตอนที่ 3: การ Push ขึ้น GitHub
 
-### 3.1 สร้าง Repository บน GitHub
-1. ไปที่ [GitHub](https://github.com/new) และสร้าง Repository ใหม่ (เช่นชื่อ `my-portfolio`)
-2. ไม่ต้องติ๊กเพิ่ม README หรือ .gitignore (เพราะในโปรเจกต์มีเรียบร้อยแล้ว)
-
-### 3.2 บันทึกและ Push โค้ดขึ้น GitHub
-รันคำสั่งต่อไปนี้ใน Terminal (PowerShell):
+โปรเจกต์นี้เชื่อมกับ repository `jxkapex-lab/MY_WEB` และใช้ branch `master` อยู่แล้ว การอัปเดตใช้คำสั่ง:
 
 ```powershell
-# 1. เพิ่มไฟล์ทั้งหมดเข้าสู่ Git Staging
 git add .
-
-# 2. บันทึก Commit
-git commit -m "feat: complete modern portfolio with Supabase integration"
-
-# 3. เปลี่ยนชื่อ Branch หลักเป็น main (ถ้ายังเป็น master)
-git branch -M main
-
-# 4. เชื่อมต่อไปยัง GitHub Repository ของคุณ (แทนที่ username และ repo-name ด้วยของคุณ)
-git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>.git
-
-# 5. Push โค้ดขึ้น GitHub
-git push -u origin main
+git commit -m "feat: update portfolio"
+git push origin master
 ```
 
 ---
 
-## 🌐 ขั้นตอนที่ 4: การนำเว็บขึ้นออนไลน์ (Deploy to Vercel)
+## 🌐 ขั้นตอนที่ 4: Deploy ด้วย GitHub Pages
 
-วิธีที่แนะนำและง่ายที่สุดสำหรับ Next.js + Supabase:
+1. เปิด repository **Settings → Secrets and variables → Actions** แล้วเพิ่ม Repository secrets:
+   - `NEXT_PUBLIC_SUPABASE_URL` = Project URL จาก Supabase
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = anon/public key จาก Supabase
+2. เปิด **Settings → Pages** แล้วเลือก **Source: GitHub Actions**
+3. เปิดแท็บ **Actions** และ Run workflow ชื่อ **Deploy to GitHub Pages** หรือ push ไปที่ `master`
+4. เมื่อ workflow ผ่าน เว็บจะอยู่ที่ `https://jxkapex-lab.github.io/MY_WEB/`
 
-1. สมัคร/เข้าสู่ระบบ [Vercel](https://vercel.com/)
-2. กด **Add New...** -> **Project**
-3. เลือก Import จาก GitHub Repository ที่เพิ่ง Push ขึ้นไป
-4. ในส่วน **Environment Variables** ให้เพิ่ม 2 ค่า:
-   - `NEXT_PUBLIC_SUPABASE_URL` = ค่า URL ของคุณจาก Supabase
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = ค่า Anon key ของคุณจาก Supabase
-5. กดปุ่ม **Deploy**
-6. เสร็จสิ้น! ทุกครั้งที่คุณสั่ง `git push` ขึ้น GitHub เว็บไซต์จะทำการ Deploy อัปเดตเวอร์ชันใหม่อัตโนมัติทันที
+ค่า anon/public key ถูกออกแบบให้ใช้ใน browser ได้ แต่ต้องใช้ร่วมกับ RLS ใน [`supabase/schema.sql`](./supabase/schema.sql) เสมอ ห้ามใส่ `service_role` key หรือรหัสผ่านฐานข้อมูลในตัวแปร `NEXT_PUBLIC_*`
 
 ---
 
